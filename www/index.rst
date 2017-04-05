@@ -9,7 +9,7 @@ Cheetah3, the Python-Powered Template Engine
 Introduction
 ------------
 Cheetah3 is a free (BSD-style) and `open source
-<https://github.com/CheetahTemplate3/cheetah3>`_ template engine and
+<https://github.com/karpierz/Cheetah3>`_ template engine and
 code-generation tool written in `Python <http://python.org>`_. Cheetah can be
 used unto itself, or incorporated with other technologies and stacks regardless
 of whether they're written in Python or not.
