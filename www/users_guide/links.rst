@@ -1,0 +1,125 @@
+Useful Web Links
+================
+
+.. _links:
+
+See the wiki for more links. (The wiki is also updated more often
+than this chapter is.)
+
+Cheetah Links
+-------------
+
+.. _links.cheetah:
+
+Home Page, issue tracker
+    - https://github.com/CheetahTemplate3/cheetah3
+    - https://github.com/CheetahTemplate3/cheetah3/issues
+
+On-line Documentation
+    - http://cheetahtemplate.org
+    - http://cheetahtemplate.sourceforge.net/learn.html (old User's Guide)
+
+View on PyPi
+    - https://pypi.python.org/pypi/Cheetah3/
+
+Mailing List Archive @ Yahoo (old and inactive, only Cheetah2 related)
+    - http://groups.yahoo.com/group/cheetah-archive/
+
+
+Third-party Cheetah Stuff
+-------------------------
+
+.. _links.thirdParty:
+
+
+-  Steve Howell has written a photo viewer using Python.
+   http://mountainwebtools.com/PicViewer/install.htm
+
+
+Webware Links
+-------------
+
+.. _links.webware:
+
+Home Page
+    - https://cito.github.io/w4py/
+
+On-line Documentation
+    - http://webware.sf.net/Webware/Docs/
+
+SourceForge Project Page
+    - https://sf.net/projects/webware/
+
+Mailing List Subscription Page
+    - http://lists.sourceforge.net/lists/listinfo/webware-discuss
+
+
+Python Links
+------------
+
+.. _links.python:
+
+Home Page
+    - http://www.python.org/
+
+On-line Documentation
+    - http://www.python.org/doc/
+
+Python Cookbook
+    - https://code.activestate.com/recipes/langs/python/
+
+
+Other Useful Links
+------------------
+
+.. _links.other:
+
+Python Database Modules and Open Source Databases
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _links.database:
+
+Python Database Topic Guide
+    - http://python.org/topics/database/
+
+PostgreSQL Database
+    - http://www.postgresql.org/index.html
+
+MySQL Database
+    - http://www.mysql.com/
+
+A comparison of PostgreSQL and MySQL
+    - http://phpbuilder.com/columns/tim20001112.php3
+
+
+Other Template Systems
+~~~~~~~~~~~~~~~~~~~~~~
+
+(links.other.templateSystems)
+
+Python Wiki
+    - https://wiki.python.org/moin/Templating
+
+
+Other Internet development frameworks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _links.internet:
+
+ZOPE (Z Object Publishing Environment)
+    - http://zope.org/
+
+Server Side Java
+    - http://jakarta.apache.org/
+
+PHP
+    - http://php.net/
+
+IBM Websphere
+    - http://www.ibm.com/websphere/
+
+Coldfusion and Spectra
+    - http://www.macromedia.com/
+
+
+
