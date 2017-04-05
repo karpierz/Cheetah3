@@ -1,5 +1,5 @@
 include MANIFEST.in LICENSE README.rst CHANGES.rst TODO tox.ini .coveragerc .travis.yml appveyor.yml
-recursive-include Cheetah *.py *.tmpl *.h *.c *.rst *.txt
+recursive-include Cheetah *.py *.tmpl *.h *.c *.txt
 recursive-include bin *
 recursive-include www *.rst *.txt *.html *.css *.js *.gif *.png
 include www/Makefile www/make.bat www/conf.py
