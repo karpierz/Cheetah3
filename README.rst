@@ -16,7 +16,7 @@ Main sites
 
 Home page: http://cheetahtemplate.org
 
-Development: https://github.com/CheetahTemplate3
+Development: https://github.com/karpierz/Cheetah3
 
 Install and download: https://pypi.python.org/pypi/Cheetah3
 
@@ -34,7 +34,7 @@ Credits
 http://cheetahtemplate.org/authors.html
 http://cheetahtemplate.sourceforge.net/credits.html
 
-https://github.com/CheetahTemplate3/cheetah3/blob/master/LICENSE
+https://github.com/karpierz/Cheetah3/blob/master/LICENSE
 
 Praise
 ------
