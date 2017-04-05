@@ -18,9 +18,9 @@ class DummyResponseFailure(Exception):
 
 class DummyResponse(object):
     """
-        A dummy Response class is used by Cheetah in place of real Webware
-        Response objects when the Template obj is not used directly as a Webware
-        servlet
+    A dummy Response class is used by Cheetah in place of real Webware
+    Response objects when the Template obj is not used directly as a Webware
+    servlet
     """
 
     def __init__(self):
@@ -70,12 +70,12 @@ class DummyResponse(object):
 
 class DummyTransaction(object):
     """
-        A dummy Transaction class is used by Cheetah in place of real Webware
-        transactions when the Template obj is not used directly as a Webware
-        servlet.
+    A dummy Transaction class is used by Cheetah in place of real Webware
+    transactions when the Template obj is not used directly as a Webware
+    servlet.
 
-        It only provides a response object and method.  All other methods and
-        attributes make no sense in this context.
+    It only provides a response object and method.  All other methods and
+    attributes make no sense in this context.
     """
 
     def __init__(self, *args, **kwargs):

@@ -318,7 +318,7 @@ class PathImportDirector(ImportDirector):
             self.path = sys.path
         else:
             self.path = pathlist
-        if ownertypes == None:
+        if ownertypes is None:
             self._ownertypes = _globalOwnerTypes
         else:
             self._ownertypes = ownertypes

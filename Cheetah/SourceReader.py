@@ -20,7 +20,7 @@ class SourceReader(object):
         self._src = src
         self._filename = filename
         self._srcLen = len(src)
-        if breakPoint == None:
+        if breakPoint is None:
             self._breakPoint = self._srcLen
         else:
             self.setBreakPoint(breakPoint)
@@ -67,7 +67,7 @@ class SourceReader(object):
         return self._srcLines
 
     def lineNum(self, pos=None):
-        if pos == None:
+        if pos is None:
             pos = self._pos
 
         for i in range(len(self._BOLs)):
@@ -75,20 +75,20 @@ class SourceReader(object):
                 return i
 
     def getRowCol(self, pos=None):
-        if pos == None:
+        if pos is None:
             pos = self._pos
         lineNum = self.lineNum(pos)
         BOL, EOL = self._BOLs[lineNum], self._EOLs[lineNum]
         return lineNum+1, pos-BOL+1
 
     def getRowColLine(self, pos=None):
-        if pos == None:
+        if pos is None:
             pos = self._pos
         row, col = self.getRowCol(pos)
         return row, col, self.splitlines()[row-1]
 
     def getLine(self, pos):
-        if pos == None:
+        if pos is None:
             pos = self._pos
         lineNum = self.lineNum(pos)
         return self.splitlines()[lineNum]
@@ -161,7 +161,7 @@ class SourceReader(object):
             raise Error('Already at beginning of stream')
 
         self._pos -= 1
-        if not c == None:
+        if c is not None:
             self._src[self._pos] = c
 
     def advance(self, offset=1):
@@ -180,7 +180,7 @@ class SourceReader(object):
 
     def readTo(self, to, start=None):
         self.checkPos(to)
-        if start == None:
+        if start is None:
             start = self._pos
         self._pos = to
         return self._src[start:to]
@@ -194,7 +194,7 @@ class SourceReader(object):
         return self.readTo(to=pos, start=start)
 
     def find(self, it, pos=None):
-        if pos == None:
+        if pos is None:
             pos = self._pos
         return self._src.find(it, pos)
 
@@ -205,18 +205,18 @@ class SourceReader(object):
             return False
 
     def rfind(self, it, pos):
-        if pos == None:
+        if pos is None:
             pos = self._pos
         return self._src.rfind(it, pos)
 
     def findBOL(self, pos=None):
-        if pos == None:
+        if pos is None:
             pos = self._pos
         src = self.src()
         return max(src.rfind('\n', 0, pos)+1, src.rfind('\r', 0, pos)+1, 0)
 
     def findEOL(self, pos=None, gobble=False):
-        if pos == None:
+        if pos is None:
             pos = self._pos
 
         match = EOLZre.search(self.src(), pos)
@@ -226,7 +226,7 @@ class SourceReader(object):
             return match.start()
 
     def isLineClearToPos(self, pos=None):
-        if pos == None:
+        if pos is None:
             pos = self.pos()
         self.checkPos(pos)
         src = self.src()

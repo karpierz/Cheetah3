@@ -631,7 +631,7 @@ class MethodCompiler(GenUtils):
         argStringChunks = []
         for arg in argsList:
             chunk = arg[0]
-            if not arg[1] == None:
+            if arg[1] is not None:
                 chunk += '=' + arg[1]
             argStringChunks.append(chunk)
         signature = "def " + functionName + "(" + ','.join(argStringChunks) + "):"
@@ -1104,7 +1104,7 @@ class AutoMethodCompiler(MethodCompiler):
             if chunk == 'self' and self.isStaticMethod():
                 # Skip the "self" method for @staticmethod decorators
                 continue
-            if not arg[1] == None:
+            if arg[1] is not None:
                 chunk += '=' + arg[1]
             argStringChunks.append(chunk)
         argString = (', ').join(argStringChunks)
@@ -1301,7 +1301,7 @@ class ClassCompiler(GenUtils):
 
     def _swallowMethodCompiler(self, methodCompiler, pos=None):
         methodCompiler.cleanupState()
-        if pos == None:
+        if pos is None:
             self._finishedMethodsList.append(methodCompiler)
         else:
             self._finishedMethodsList.insert(pos, methodCompiler)
@@ -1348,7 +1348,7 @@ class ClassCompiler(GenUtils):
         argStringChunks = []
         for arg in argsList:
             chunk = arg[0]
-            if not arg[1] == None:
+            if arg[1] is not None:
                 chunk += '=' + arg[1]
             argStringChunks.append(chunk)
         argString = ','.join(argStringChunks)
