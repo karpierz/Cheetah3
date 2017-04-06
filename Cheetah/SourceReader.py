@@ -1,4 +1,5 @@
-"""SourceReader class for Cheetah's Parser and CodeGenerator
+"""
+SourceReader class for Cheetah's Parser and CodeGenerator
 """
 
 import re
@@ -28,7 +29,7 @@ class SourceReader(object):
         self._bookmarks = {}
         self._posTobookmarkMap = {}
 
-        ## collect some meta-information
+        # collect some meta-information
         self._EOLs = []
         pos = 0
         while pos < len(self):
@@ -36,10 +37,7 @@ class SourceReader(object):
             self._EOLs.append(EOLmatch.start())
             pos = EOLmatch.end()
 
-        self._BOLs = []
-        for pos in self._EOLs:
-            BOLpos = self.findBOL(pos)
-            self._BOLs.append(BOLpos)
+        self._BOLs = [self.findBOL(pos) for pos in self._EOLs]
 
     def src(self):
         return self._src
@@ -51,35 +49,30 @@ class SourceReader(object):
         return self._breakPoint
 
     def __getitem__(self, i):
-        if not isinstance(i, int):
-            self.checkPos(i.stop)
+        if isinstance(i, slice):
+            start, stop, step = max(i.start, 0), max(i.stop, 0), i.step
+            return self._src[start:stop:step]
         else:
-            self.checkPos(i)
-        return self._src[i]
-
-    def __getslice__(self, i, j):
-        i = max(i, 0); j = max(j, 0)
-        return self._src[i:j]
+            self.checkPos(i if isinstance(i, int) else i.stop)
+            return self._src[i]
 
     def splitlines(self):
-        if not hasattr(self, '_srcLines'):
+        if not hasattr(self, "_srcLines"):
             self._srcLines = self._src.splitlines()
         return self._srcLines
 
     def lineNum(self, pos=None):
         if pos is None:
             pos = self._pos
-
-        for i in range(len(self._BOLs)):
-            if pos >= self._BOLs[i] and pos <= self._EOLs[i]:
-                return i
+        return next((i for i, BOL in enumerate(self._BOLs)
+                     if BOL <= pos <= self._EOLs[i]), None)
 
     def getRowCol(self, pos=None):
         if pos is None:
             pos = self._pos
-        lineNum = self.lineNum(pos)
-        BOL, EOL = self._BOLs[lineNum], self._EOLs[lineNum]
-        return lineNum+1, pos-BOL+1
+        line_num = self.lineNum(pos)
+        BOL, EOL = self._BOLs[line_num], self._EOLs[line_num]
+        return line_num + 1, pos - BOL + 1
 
     def getRowColLine(self, pos=None):
         if pos is None:
@@ -90,8 +83,8 @@ class SourceReader(object):
     def getLine(self, pos):
         if pos is None:
             pos = self._pos
-        lineNum = self.lineNum(pos)
-        return self.splitlines()[lineNum]
+        line_num = self.lineNum(pos)
+        return self.splitlines()[line_num]
 
     def pos(self):
         return self._pos
@@ -101,25 +94,24 @@ class SourceReader(object):
         self._pos = pos
 
     def validPos(self, pos):
-        return pos <= self._breakPoint and pos >=0
+        return 0 <= pos <= self._breakPoint
 
     def checkPos(self, pos):
-        if not pos <= self._breakPoint:
-            raise Error("pos (" + str(pos) + ") is invalid: beyond the stream's end (" +
-                        str(self._breakPoint-1) + ")" )
-        elif not pos >=0:
-            raise Error("pos (" + str(pos) + ") is invalid: less than 0" )
+        if pos > self._breakPoint:
+            raise Error("pos (%d) is invalid: beyond the "
+                        "stream's end (%d)" % (pos, self._breakPoint - 1))
+        elif pos < 0:
+            raise Error("pos (%d) is invalid: less than 0" % pos)
 
     def breakPoint(self):
         return self._breakPoint
 
     def setBreakPoint(self, pos):
         if pos > self._srcLen:
-            raise Error("New breakpoint (" + str(pos) +
-                        ") is invalid: beyond the end of stream's source string (" +
-                        str(self._srcLen) + ")" )
-        elif not pos >= 0:
-            raise Error("New breakpoint (" + str(pos) + ") is invalid: less than 0" )
+            raise Error("New breakpoint (%d) is invalid: beyond the end of "
+                        "stream's source string (%d)" % (pos, self._srcLen))
+        elif pos < 0:
+            raise Error("New breakpoint (%d) is invalid: less than 0" % pos)
 
         self._breakPoint = pos
 
@@ -132,11 +124,12 @@ class SourceReader(object):
 
     def gotoBookmark(self, name):
         if not self.hasBookmark(name):
-            raise Error("Invalid bookmark (" + name + ") is invalid: does not exist")
+            raise Error("Invalid bookmark (%s) is invalid: "
+                        "does not exist" % name)
         pos = self._bookmarks[name]
         if not self.validPos(pos):
-            raise Error("Invalid bookmark (" + name + ', '+
-                        str(pos) + ") is invalid: pos is out of range" )
+            raise Error("Invalid bookmark (%s, %d) is invalid: "
+                        "pos is out of range" % (name, pos))
         self._pos = pos
 
     def atEnd(self):
@@ -146,19 +139,19 @@ class SourceReader(object):
         return self._pos == 0
 
     def peek(self, offset=0):
-        self.checkPos(self._pos+offset)
+        self.checkPos(self._pos + offset)
         pos = self._pos + offset
         return self._src[pos]
 
     def getc(self):
         pos = self._pos
-        if self.validPos(pos+1):
+        if self.validPos(pos + 1):
             self._pos += 1
         return self._src[pos]
 
     def ungetc(self, c=None):
         if not self.atStart():
-            raise Error('Already at beginning of stream')
+            raise Error("Already at beginning of stream")
 
         self._pos -= 1
         if c is not None:
@@ -187,10 +180,7 @@ class SourceReader(object):
 
     def readToEOL(self, start=None, gobble=True):
         EOLmatch = EOLZre.search(self.src(), self.pos())
-        if gobble:
-            pos = EOLmatch.end()
-        else:
-            pos = EOLmatch.start()
+        pos = EOLmatch.end() if gobble else EOLmatch.start()
         return self.readTo(to=pos, start=start)
 
     def find(self, it, pos=None):
@@ -199,10 +189,7 @@ class SourceReader(object):
         return self._src.find(it, pos)
 
     def startswith(self, it, pos=None):
-        if self.find(it, pos) == self.pos():
-            return True
-        else:
-            return False
+        return self.find(it, pos) == self.pos()
 
     def rfind(self, it, pos):
         if pos is None:
@@ -213,17 +200,14 @@ class SourceReader(object):
         if pos is None:
             pos = self._pos
         src = self.src()
-        return max(src.rfind('\n', 0, pos)+1, src.rfind('\r', 0, pos)+1, 0)
+        return max(src.rfind('\n', 0, pos) + 1,
+                   src.rfind('\r', 0, pos) + 1, 0)
 
     def findEOL(self, pos=None, gobble=False):
         if pos is None:
             pos = self._pos
-
         match = EOLZre.search(self.src(), pos)
-        if gobble:
-            return match.end()
-        else:
-            return match.start()
+        return match.end() if gobble else match.start()
 
     def isLineClearToPos(self, pos=None):
         if pos is None:
@@ -240,11 +224,11 @@ class SourceReader(object):
             return strOrRE.match(self.src(), self.pos())
 
     def matchWhiteSpace(self, WSchars=' \f\t'):
-        return (not self.atEnd()) and  self.peek() in WSchars
+        return (not self.atEnd()) and self.peek() in WSchars
 
     def getWhiteSpace(self, max=None, WSchars=' \f\t'):
         if not self.matchWhiteSpace(WSchars):
-            return ''
+            return ""
         start = self.pos()
         breakPoint = self.breakPoint()
         if max is not None:
@@ -260,7 +244,7 @@ class SourceReader(object):
 
     def getNonWhiteSpace(self, WSchars=' \f\t\n\r'):
         if not self.matchNonWhiteSpace(WSchars):
-            return ''
+            return ""
         start = self.pos()
         while self.pos() < self.breakPoint():
             self.advance()

@@ -30,6 +30,7 @@ from . import ErrorCatchers
 from .Unspecified import Unspecified
 from .Macros.I18n import I18n
 
+
 # re tools
 _regexCache = {}
 def cachedRegex(pattern):
@@ -242,12 +243,14 @@ endDirectiveNamesAndHandlers = {
     'unless': None,             # has short-form
     }
 
+
 ##################################################
 ## CLASSES ##
 
 # @@TR: SyntaxError doesn't call exception.__str__ for some reason!
 #class ParseError(SyntaxError):
 class ParseError(ValueError):
+
     def __init__(self, stream, msg='Invalid Syntax', extMsg='', lineno=None, col=None):
         self.stream = stream
         if stream.pos() >= len(stream):
@@ -309,14 +312,21 @@ class ParseError(ValueError):
 
         return report
 
+
 class ForbiddenSyntax(ParseError):
     pass
+
+
 class ForbiddenExpression(ForbiddenSyntax):
     pass
+
+
 class ForbiddenDirective(ForbiddenSyntax):
     pass
 
+
 class CheetahVariable(object):
+
     def __init__(self, nameChunks, useNameMapper=True, cacheToken=None,
                  rawSource=None):
         self.nameChunks = nameChunks
@@ -324,8 +334,10 @@ class CheetahVariable(object):
         self.cacheToken = cacheToken
         self.rawSource = rawSource
 
+
 class Placeholder(CheetahVariable):
     pass
+
 
 class ArgList(object):
     """Used by _LowLevelParser.getArgList()"""
@@ -360,8 +372,10 @@ class ArgList(object):
     def __str__(self):
         return str(self.merge())
 
+
 class _LowLevelParser(SourceReader):
-    """This class implements the methods to match or extract ('get*') the basic
+    """\
+    This class implements the methods to match or extract ('get*') the basic
     elements of Cheetah's grammar.  It does NOT handle any code generation or
     state management.
     """
@@ -482,7 +496,6 @@ class _LowLevelParser(SourceReader):
                 )
         else:
             self.EOLSlurpRE = None
-
 
     def _makeCommentREs(self):
         """Construct the regex bits that are used in comment parsing."""
@@ -615,8 +628,8 @@ class _LowLevelParser(SourceReader):
 
     def getCommaSeparatedSymbols(self):
         """
-            Loosely based on getDottedName to pull out comma separated
-            named chunks
+        Loosely based on getDottedName to pull out comma separated
+        named chunks
         """
         srcLen = len(self)
         pieces = []
@@ -758,7 +771,6 @@ class _LowLevelParser(SourceReader):
             raise ParseError(self, msg='Invalid directive end token')
         return self.readTo(match.end())
 
-
     def matchColonForSingleLineShortFormDirective(self):
         if not self.atEnd() and self.peek()==':':
             restOfLine = self[self.pos()+1:self.findEOL()]
@@ -816,7 +828,6 @@ class _LowLevelParser(SourceReader):
             raise ParseError(self, msg='Expected Cheetah $var start token')
         return self.readTo( match.end() )
 
-
     def getCacheToken(self):
         try:
             token = self.cacheTokenRE.match(self.src(), self.pos())
@@ -832,8 +843,6 @@ class _LowLevelParser(SourceReader):
             return token.group()
         except:
             raise ParseError(self, msg='Expected silent placeholder token')
-
-
 
     def getTargetVarsList(self):
         varnames = []
@@ -1274,7 +1283,6 @@ class _LowLevelParser(SourceReader):
                 self,
                 msg='This form of $placeholder syntax is not valid here.')
 
-
     def getPlaceholder(self, allowCacheTokens=False, plain=False, returnEverything=False):
         # filtered
         for callback in self.setting('preparsePlaceholderHooks'):
@@ -1342,10 +1350,12 @@ class _LowLevelParser(SourceReader):
 
 
 class _HighLevelParser(_LowLevelParser):
-    """This class is a StateMachine for parsing Cheetah source and
+    """\
+    This class is a StateMachine for parsing Cheetah source and
     sending state dependent code generation commands to
     Cheetah.Compiler.Compiler.
     """
+
     def __init__(self, src, filename=None, breakPoint=None, compiler=None):
         super(_HighLevelParser, self).__init__(src, filename=filename, breakPoint=breakPoint)
         self.setSettingsManager(compiler)
@@ -1419,11 +1429,8 @@ class _HighLevelParser(_LowLevelParser):
         for directiveName in self.setting('closeableDirectives', []):
             self._closeableDirectives.append(directiveName)
 
-
-
         macroDirectives = self.setting('macroDirectives', {})
         macroDirectives['i18n'] = I18n
-
 
         for macroName, callback in macroDirectives.items():
             if isinstance(callback, type):
@@ -1701,7 +1708,6 @@ class _HighLevelParser(_LowLevelParser):
             self._compiler.handleWSBeforeDirective()
         return textEaten
 
-
     def eatSimpleExprDirective(self, directiveName, includeDirectiveNameInExpr=True):
         # filtered
         isLineClearToStartToken = self.isLineClearToStartToken()
@@ -1873,7 +1879,6 @@ class _HighLevelParser(_LowLevelParser):
             sys.stderr.write('----------------------------------------------------------------------\n')
             sys.stderr.write('Please check the syntax of these settings.\n\n')
             raise
-
 
     def eatCompilerSettings(self):
         # filtered
@@ -2285,7 +2290,6 @@ class _HighLevelParser(_LowLevelParser):
              macroSrc,
              '%end def'])
 
-
         from Cheetah.Template import Template
         templateAPIClass = self.setting('templateAPIClassForDefMacro', default=Template)
         compilerSettings = self.setting('compilerSettingsForDefMacro', default={})
@@ -2537,7 +2541,6 @@ class _HighLevelParser(_LowLevelParser):
         self._eatRestOfDirectiveTag(isLineClearToStartToken, endOfFirstLinePos)
         self._compiler.setTransform(transformer, isKlass)
 
-
     def eatErrorCatcher(self):
         isLineClearToStartToken = self.isLineClearToStartToken()
         endOfFirstLinePos = self.findEOL()
@@ -2658,6 +2661,7 @@ class _HighLevelParser(_LowLevelParser):
                 "Some #directives are missing their corresponding #end ___ tag: %s" %(
                 ', '.join(self._openDirectivesStack)))
             raise ParseError(self, msg=errorMsg)
+
 
 ##################################################
 ## Make an alias to export

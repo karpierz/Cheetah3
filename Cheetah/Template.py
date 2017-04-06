@@ -351,7 +351,6 @@ class Template(Servlet):
                 commandlineopts=None,
                 keepRefToGeneratedCode=Unspecified,
                 ):
-
         """
         The core API for compiling Cheetah source code into template classes.
 
@@ -595,6 +594,7 @@ class Template(Servlet):
                           preprocessors=[ dict(tokens='@ %', searchList=[...]) ] )
 
         """
+
         errmsg = "arg '%s' must be %s"
 
         if not isinstance(source, (NoneType, str, unicode)):
@@ -1331,6 +1331,7 @@ class Template(Servlet):
         Each #cache directive block or $*cachedPlaceholder is a separate 'cache
         region'.
         """
+
         # returns a copy to prevent users mucking it up
         return self._CHEETAH__cacheRegions.copy()
 
@@ -1385,6 +1386,7 @@ class Template(Servlet):
     def varExists(self, varName, autoCall=True):
         """Test if a variable name exists in the searchList.
         """
+
         try:
             valueFromSearchList(self.searchList(), varName.replace('$', ''), autoCall)
             return True
@@ -1402,17 +1404,18 @@ class Template(Servlet):
              target=None,
              comment=None
              ):
-        """This is just a stub at this time.
+        """\
+        This is just a stub at this time.
 
-           ::
+        ::
 
-               plural = the plural form of the message
-               n = a sized argument to distinguish between single and plural forms
-               id = msgid in the translation catalog
-               domain = translation domain
-               source = source lang
-               target = a specific target lang
-               comment = a comment to the translation team
+            plural = the plural form of the message
+            n = a sized argument to distinguish between single and plural forms
+            id = msgid in the translation catalog
+            domain = translation domain
+            source = source lang
+            target = a specific target lang
+            comment = a comment to the translation team
 
         See the following for some ideas
         http://www.zope.org/DevHome/Wikis/DevSite/Projects/ComponentArchitecture/ZPTInternationalizationSupport
@@ -1422,6 +1425,7 @@ class Template(Servlet):
           - There is no need to replicate the i18n:name attribute from plone / PTL,
             as cheetah placeholders serve the same purpose
         """
+
         return message
 
     def getFileContents(self, path):

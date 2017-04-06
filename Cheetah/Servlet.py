@@ -7,7 +7,7 @@ import os.path
 
 class Servlet(object):
     """
-        This class is an abstract baseclass for Cheetah.Template.Template.
+    This class is an abstract baseclass for Cheetah.Template.Template.
     """
 
     transaction = None

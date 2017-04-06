@@ -23,6 +23,7 @@ except ImportError:
     except ImportError:  # PY3
         from io import StringIO
 
+
 ##################################################
 ## CLASSES
 
@@ -49,10 +50,11 @@ class Hierarchy(object):
             self._crumbCSSClass = ''
         self._prefix=prefix
 
-    ## Main output methods
+    # Main output methods #
 
     def menuList(self, menuCSSClass=None):
         """An indented menu list"""
+
         if menuCSSClass:
             self._menuCSSClass = ' class="%s"' % menuCSSClass
 
@@ -63,6 +65,7 @@ class Hierarchy(object):
 
     def crumbs(self, crumbCSSClass=None):
         """The home>where>you>are crumbs"""
+
         if crumbCSSClass:
             self._crumbCSSClass = ' class="%s"' % crumbCSSClass
 
@@ -90,7 +93,7 @@ class Hierarchy(object):
             map(lambda x, self=self: self.crumbLink(x[0], x[1]), path)) + \
             self.crumbTerminator()
 
-    ## Methods to control the Aesthetics
+    # Methods to control the Aesthetics #
     #  - override these methods for your own look
 
     def menuLink(self, url, text, indent):
@@ -117,9 +120,10 @@ class Hierarchy(object):
 
     def emptyCrumb(self):
         """When you are at the homepage"""
+
         return ''
 
-    ## internal methods
+    # internal methods #
 
     def _menubarRecurse(self, contents, indent, stream):
         if isinstance(contents, tuple):
@@ -131,15 +135,13 @@ class Hierarchy(object):
         stream.write(self.menuLink(url, text, indent))
         if self._inContents(contents):
             for item in rest:
-                self._menubarRecurse(item, indent+1, stream)
+                self._menubarRecurse(item, indent + 1, stream)
 
     def _inContents(self, contents):
         if isinstance(contents, tuple):
             return self._currentURL == contents[0]
-        for item in contents:
-            if self._inContents(item):
-                return True
-        return False
+        else:
+            return any(self._inContents(item) for item in contents)
 
 
 ##################################################

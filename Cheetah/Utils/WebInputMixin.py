@@ -41,13 +41,8 @@ def _lookup(name, func, multi, converters):
     # If there's no colon, the suffix is "".  'longName' is the name with the
     # suffix, 'shortName' is without.
     # XXX This implementation assumes "height:" means "height".
-    colon = name.find(':')
-    if colon != -1:
-        longName = name
-        shortName, ext = name[:colon], name[colon+1:]
-    else:
-        longName = shortName = name
-        ext = ''
+    longName = name
+    shortName, _, ext = name.partition(':')
 
     # Step 2 -- look up the values by calling 'func'.
     if longName != shortName:
@@ -66,23 +61,21 @@ def _lookup(name, func, multi, converters):
     try:
         converter = converters[ext]
     except KeyError:
-        fmt = "'%s' is not a valid converter name in '%s'"
-        tup = (ext, longName)
-        raise TypeError(fmt % tup)
+        raise TypeError("'%s' is not a valid converter "
+                        "name in '%s'" % (ext, longName))
 
     # Step 5 -- if there's a converter func, run it on each element.
     # If the converter raises an exception, use or raise 'converter.error'.
     if converter.func is not None:
         tmp = values[:]
         values = []
-        for elm in tmp:
+        for elem in tmp:
             try:
-                elm = converter.func(elm)
+                elem = converter.func(elem)
             except (TypeError, ValueError):
-                tup = converter.name, elm
-                errmsg = "%s '%s' contains invalid characters" % tup
-                elm = useOrRaise(converter.error, errmsg)
-            values.append(elm)
+                errmsg = "%s '%s' contains invalid characters" % (converter.name, elem)
+                elem = useOrRaise(converter.error, errmsg)
+            values.append(elem)
     # 'values' is now a list of strings, ints or floats.
 
     # Step 6 -- If we're supposed to return a multi value, return the list
@@ -93,7 +86,5 @@ def _lookup(name, func, multi, converters):
         return shortName, values
     if len(values) == 0:
         return shortName, useOrRaise(converter.default)
-    return shortName, values[0]
-
-
-# vim: sw=4 ts=4 expandtab
+    else:
+        return shortName, values[0]

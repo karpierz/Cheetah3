@@ -415,7 +415,7 @@ class MethodCompiler(GenUtils):
             filterArgs += ', rawExpr=%s'%repr(rawExpr)
 
         if self.setting('alwaysFilterNone'):
-            if rawExpr and rawExpr.find('\n')==-1 and rawExpr.find('\r')==-1:
+            if rawExpr and rawExpr.find('\n') == -1 and rawExpr.find('\r') == -1:
                 self.addChunk("_v = %s # %r"%(chunk, rawExpr))
                 if lineCol:
                     self.appendToPrevChunk(' on line %s, col %s'%lineCol)
@@ -538,7 +538,7 @@ class MethodCompiler(GenUtils):
             # we need to split the LVALUE to deal with globalSetVars
             splitPos1 = LVALUE.find('.')
             splitPos2 = LVALUE.find('[')
-            if splitPos1 > 0 and splitPos2==-1:
+            if splitPos1 > 0 and splitPos2 == -1:
                 splitPos = splitPos1
             elif splitPos1 > 0 and splitPos1 < max(splitPos2, 0):
                 splitPos = splitPos1

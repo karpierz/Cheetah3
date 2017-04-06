@@ -1,8 +1,8 @@
 """
-    Filters for the #filter directive as well as #transform
+Filters for the #filter directive as well as #transform
 
-    #filter results in output filters Cheetah's $placeholders .
-    #transform results in a filter on the entirety of the output
+#filter results in output filters Cheetah's $placeholders .
+#transform results in a filter on the entirety of the output
 """
 
 import sys
@@ -11,6 +11,7 @@ unicode = type(u"")
 # Additional entities WebSafe knows how to transform.  No need to include
 # '<', '>' or '&' since those will have been done already.
 webSafeEntities = {' ': '&nbsp;', '"': '&quot;'}
+
 
 class Filter(object):
     """A baseclass for the Cheetah Filters."""
@@ -22,12 +23,14 @@ class Filter(object):
 
         Subclasses should call this method.
         """
+
         self.template = template
 
     def filter(self, val, encoding=None, str=str, **kw):
         '''
-            Pass Unicode strings through unmolested, unless an encoding is specified.
+        Pass Unicode strings through unmolested, unless an encoding is specified.
         '''
+
         if val is None:
             return u''
         if isinstance(val, unicode):
@@ -41,55 +44,60 @@ class Filter(object):
                 # on and let DummyTransaction worry about it
                 return str(val)
 
+
 RawOrEncodedUnicode = Filter
 
 EncodeUnicode = Filter
 
+
 class Markdown(EncodeUnicode):
     '''
-        Markdown will change regular strings to `Markdown
-        <http://daringfireball.net/projects/markdown/>`_
+    Markdown will change regular strings to `Markdown
+    <http://daringfireball.net/projects/markdown/>`_
 
-        Such that::
+    Such that::
 
-            My Header
-            =========
+        My Header
+        =========
 
-        Becomes::
+    Becomes::
 
-            <h1>My Header</h1>
+        <h1>My Header</h1>
 
-        and so on.
+    and so on.
 
-        Markdown is meant to be used with the #transform
-        tag, as it's usefulness with #filter is marginal at
-        best
+    Markdown is meant to be used with the #transform
+    tag, as it's usefulness with #filter is marginal at
+    best
     '''
+
     def filter(self,  value, **kwargs):
         # This is a bit of a hack to allow outright embedding of the markdown module
         import markdown
         encoded = super(Markdown, self).filter(value, **kwargs)
         return markdown.markdown(encoded)
 
+
 class CodeHighlighter(EncodeUnicode):
     '''
-        The CodeHighlighter filter depends on the "pygments" module which you can
-        download and install from: http://pygments.org
+    The CodeHighlighter filter depends on the "pygments" module which you can
+    download and install from: http://pygments.org
 
-        What the CodeHighlighter assumes the string that it's receiving is source
-        code and uses pygments.lexers.guess_lexer() to try to guess which parser
-        to use when highlighting it.
+    What the CodeHighlighter assumes the string that it's receiving is source
+    code and uses pygments.lexers.guess_lexer() to try to guess which parser
+    to use when highlighting it.
 
-        CodeHighlighter will return the HTML and CSS to render the code block, syntax
-        highlighted, in a browser
+    CodeHighlighter will return the HTML and CSS to render the code block, syntax
+    highlighted, in a browser
 
-        NOTE: I had an issue installing pygments on Linux/amd64/Python 2.6 dealing with
-        importing of pygments.lexers, I was able to correct the failure by adding::
+    NOTE: I had an issue installing pygments on Linux/amd64/Python 2.6 dealing with
+    importing of pygments.lexers, I was able to correct the failure by adding::
 
-            raise ImportError
+        raise ImportError
 
-        to line 39 of pygments/plugin.py (since importing pkg_resources was causing issues)
+    to line 39 of pygments/plugin.py (since importing pkg_resources was causing issues)
     '''
+
     def filter(self, source, **kwargs):
         encoded = super(CodeHighlighter, self).filter(source, **kwargs)
         try:
@@ -115,8 +123,8 @@ class CodeHighlighter(EncodeUnicode):
             --></style>%(source)s''' % {'css' : css, 'source' : encoded}
 
 
-
 class MaxLen(Filter):
+
     def filter(self, val, **kw):
         """Replace None with '' and cut off at maxlen."""
 
@@ -125,9 +133,11 @@ class MaxLen(Filter):
             return output[:kw['maxlen']]
         return output
 
+
 class WebSafe(Filter):
     """Escape HTML entities in $placeholders.
     """
+
     def filter(self, val, **kw):
         s = super(WebSafe, self).filter(val, **kw)
         # These substitutions are copied from cgi.escape().
@@ -162,6 +172,7 @@ class Strip(Filter):
     This filter is intended to be usable both with the #filter directive and
     with the proposed #sed directive (which has not been ratified yet.)
     """
+
     def filter(self, val, **kw):
         s = super(Strip, self).filter(val, **kw)
         result = []
@@ -179,16 +190,19 @@ class Strip(Filter):
         result.append(chunk)
         return "".join(result)
 
+
 class StripSqueeze(Filter):
     """Canonicalizes every chunk of whitespace to a single space.
 
     Strips leading/trailing whitespace.  Removes all newlines, so multi-line
     input is joined into one ling line with NO trailing newline.
     """
+
     def filter(self, val, **kw):
         s = super(StripSqueeze, self).filter(val, **kw)
         s = s.split()
         return " ".join(s)
+
 
 ##################################################
 ## MAIN ROUTINE -- testing
@@ -205,6 +219,7 @@ def test():
     print("StripSqueeze:", repr(StripSqueeze().filter(s2)))
 
     print("Unicode:", repr(EncodeUnicode().filter(u'aoeu12345\u1234')))
+
 
 if __name__ == "__main__":
     test()

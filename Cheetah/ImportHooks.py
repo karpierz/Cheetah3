@@ -121,6 +121,7 @@ def install(templateFileExtensions=('.tmpl',)):
 
 def uninstall():
     """Uninstall the Cheetah Import Hooks"""
+
     global _installed
     if not _installed:
         try:

@@ -20,11 +20,13 @@ PY2 = sys.version_info[0] < 3
 numberRE = re.compile(Number)
 complexNumberRE = re.compile('[\(]*' +Number + r'[ \t]*\+[ \t]*' + Number + '[\)]*')
 
+
 ##################################################
 ## FUNCTIONS ##
 
 def mergeNestedDictionaries(dict1, dict2, copy=False, deepcopy=False):
-    """Recursively merge the values of dict2 into dict1.
+    """
+    Recursively merge the values of dict2 into dict1.
 
     This little function is very handy for selectively overriding settings in a
     settings dictionary that has a nested structure.
@@ -41,6 +43,7 @@ def mergeNestedDictionaries(dict1, dict2, copy=False, deepcopy=False):
         else:
             dict1[key] = val
     return dict1
+
 
 def stringIsNumber(S):
     """Return True if theString represents a Python number, False otherwise.
@@ -59,6 +62,7 @@ def stringIsNumber(S):
     else:
         return True
 
+
 def convStringToNum(theString):
     """Convert a string representation of a Python number to the Python version"""
 
@@ -70,8 +74,10 @@ def convStringToNum(theString):
 class Error(Exception):
     pass
 
+
 class NoDefault(object):
     pass
+
 
 class ConfigParserCaseSensitive(ConfigParser):
     """A case sensitive version of the standard Python ConfigParser."""
@@ -80,8 +86,10 @@ class ConfigParserCaseSensitive(ConfigParser):
         """Don't change the case as is done in the default implemenation."""
         return optionstr
 
+
 class _SettingsCollector(object):
-    """An abstract base class that provides the methods SettingsManager uses to
+    """
+    An abstract base class that provides the methods SettingsManager uses to
     collect settings from config files and strings.
 
     This class only collects settings it doesn't modify the _settings dictionary
@@ -93,6 +101,7 @@ class _SettingsCollector(object):
     def readSettingsFromModule(self, mod, ignoreUnderscored=True):
         """Returns all settings from a Python module.
         """
+
         S = {}
         attrs = vars(mod)
         for k, v in attrs.iteritems() if PY2 else attrs.items():
@@ -116,7 +125,8 @@ class _SettingsCollector(object):
         return self.readSettingsFromModule(module)
 
     def readSettingsFromConfigFileObj(self, inFile, convert=True):
-        """Return the settings from a config file that uses the syntax accepted by
+        """
+        Return the settings from a config file that uses the syntax accepted by
         Python's standard ConfigParser module (like Windows .ini files).
 
         NOTE:
@@ -160,8 +170,8 @@ class _SettingsCollector(object):
                 if o != '__name__':
                     newSettings[s][o] = p.get(s, o)
 
-        ## loop through new settings -> deal with global settings, numbers,
-        ## booleans and None ++ also deal with 'importSettings' commands
+        # loop through new settings -> deal with global settings, numbers,
+        # booleans and None ++ also deal with 'importSettings' commands
 
         for sect, subDict in list(newSettings.items()):
             for key, val in list(subDict.items()):
@@ -198,7 +208,8 @@ class _SettingsCollector(object):
 
 
 class SettingsManager(_SettingsCollector):
-    """A mixin class that provides facilities for managing application settings.
+    """
+    A mixin class that provides facilities for managing application settings.
 
     SettingsManager is designed to work well with nested settings dictionaries
     of any depth.
@@ -222,7 +233,7 @@ class SettingsManager(_SettingsCollector):
 
         pass
 
-    ## core post startup methods
+    # core post startup methods
 
     def setting(self, name, default=NoDefault):
         """Get a setting from self._settings, with or without a default value."""
@@ -232,25 +243,29 @@ class SettingsManager(_SettingsCollector):
         else:
             return self._settings.get(name, default)
 
-
     def hasSetting(self, key):
         """True/False"""
+
         return key in self._settings
 
     def setSetting(self, name, value):
         """Set a setting in self._settings."""
+
         self._settings[name] = value
 
     def settings(self):
         """Return a reference to the settings dictionary"""
+
         return self._settings
 
     def copySettings(self):
         """Returns a shallow copy of the settings dictionary"""
+
         return copyModule.copy(self._settings)
 
     def deepcopySettings(self):
         """Returns a deep copy of the settings dictionary"""
+
         return copyModule.deepcopy(self._settings)
 
     def updateSettings(self, newSettings, merge=True):
@@ -261,8 +276,7 @@ class SettingsManager(_SettingsCollector):
         else:
             self._settings.update(newSettings)
 
-
-    ## source specific update methods
+    # source specific update methods
 
     def updateSettingsFromPySrcStr(self, theString, merge=True):
         """Update the settings from a code in a Python src string."""
@@ -270,7 +284,6 @@ class SettingsManager(_SettingsCollector):
         newSettings = self.readSettingsFromPySrcStr(theString)
         self.updateSettings(newSettings,
                             merge=newSettings.get('mergeSettings', merge) )
-
 
     def updateSettingsFromConfigFileObj(self, inFile, convert=True, merge=True):
         """See the docstring for .updateSettingsFromConfigFile()

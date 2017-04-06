@@ -7,6 +7,8 @@ This module was contributed by Ian Bicking.
 """
 
 import sys
+PY2 = sys.version_info[0] < 3
+del sys
 
 
 class RecursiveNull(object):
@@ -21,16 +23,16 @@ class RecursiveNull(object):
         return self
 
     def __str__(self):
-        return ''
+        return ""
 
     def __repr__(self):
-        return ''
+        return ""
 
-    if sys.version_info[0] >= 3:
-        def __bool__(self):
+    if PY2:
+        def __nonzero__(self):
             return False
     else:
-        def __nonzero__(self):
+        def __bool__(self):
             return False
 
     def __eq__(self, x):
@@ -46,4 +48,4 @@ class RecursiveNull(object):
             return False
 
 
-del sys
+del PY2

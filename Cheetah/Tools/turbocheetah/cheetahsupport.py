@@ -10,13 +10,13 @@ from ... import Compiler
 
 def _recompile_template(package, basename, tfile, classname):
     tmpl = pkg_resources.resource_string(package, "%s.tmpl" % basename)
-    c = Compiler.Compiler(source=tmpl, mainClassName='GenTemplate')
+    c = Compiler.Compiler(source=tmpl, mainClassName="GenTemplate")
     code = str(c)
     mod = imp.new_module(classname)
     ns = dict()
     exec(code, ns)
     tempclass = ns.get("GenTemplate",
-                       ns.get('DynamicallyCompiledCheetahTemplate'))
+                       ns.get("DynamicallyCompiledCheetahTemplate"))
     assert tempclass
     tempclass.__name__ = basename
     setattr(mod, basename, tempclass)
@@ -39,19 +39,18 @@ class TurboCheetah(object):
     def load_template(self, template=None,
                       template_string=None, template_file=None,
                       loadingSite=False):
-        """Searches for a template along the Python path.
+        """\
+        Searches for a template along the Python path.
 
         Template files must end in ".tmpl" and be in legitimate packages.
         """
         given = len([_f for _f in (template, template_string, template_file) if _f])
         if given > 1:
-            raise TypeError(
-                "You may give only one of template, template_string, and "
-                "template_file")
+            raise TypeError("You may give only one of template, "
+                            "template_string, and template_file")
         if not given:
-            raise TypeError(
-                "You must give one of template, template_string, or "
-                "template_file")
+            raise TypeError("You must give one of template, "
+                            "template_string, or template_file")
         if template:
             return self.load_template_module(template)
         elif template_string:
@@ -63,11 +62,8 @@ class TurboCheetah(object):
 
         ct = self.compiledTemplates
 
-        divider = classname.rfind(".")
-        if divider > -1:
-            package = classname[0:divider]
-            basename = classname[divider+1:]
-        else:
+        package, divider, basename = classname.rpartition(".")
+        if not divider:
             raise ValueError("All templates must be in a package")
 
         if not self.options.get("cheetah.precompiled", False):
@@ -99,17 +95,11 @@ class TurboCheetah(object):
     def load_template_file(self, filename):
         raise NotImplementedError
 
-    def render(self, info, format="html", fragment=False, template=None,
-               template_string=None, template_file=None):
-        tclass = self.load_template(
-            template=template, template_string=template_string,
-            template_file=template_file)
-        if self.get_extra_vars:
-            extra = self.get_extra_vars()
-        else:
-            extra = {}
+    def render(self, info, format="html", fragment=False,
+               template=None, template_string=None, template_file=None):
+        tclass = self.load_template(template=template,
+                                    template_string=template_string,
+                                    template_file=template_file)
+        extra = self.get_extra_vars() if self.get_extra_vars else {}
         tempobj = tclass(searchList=[info, extra])
-        if fragment:
-            return tempobj.fragment()
-        else:
-            return tempobj.respond()
+        return tempobj.fragment() if fragment else tempobj.respond()

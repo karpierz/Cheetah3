@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""This module supports Cheetah's optional NameMapper syntax.
+"""\
+This module supports Cheetah's optional NameMapper syntax.
 
 Overview
 ================================================================================
@@ -162,6 +163,7 @@ __all__ = ('NotFound',
            'valueFromFrame',
            )
 
+
 ## N.B. An attempt is made at the end of this module to import C versions of
 ## these functions.  If _namemapper.c has been compiled succesfully and the
 ## import goes smoothly, the Python versions defined here will be replaced with
@@ -170,23 +172,26 @@ __all__ = ('NotFound',
 class NotFound(LookupError):
     pass
 
+
 def _raiseNotFoundException(key, namespace):
     excString = "cannot find '%s'"%key
     if _INCLUDE_NAMESPACE_REPR_IN_NOTFOUND_EXCEPTIONS:
         excString += ' in the namespace %s'%pformat(namespace)
     raise NotFound(excString)
 
+
 def _wrapNotFoundException(exc, fullName, namespace):
     if not _ALLOW_WRAPPING_OF_NOTFOUND_EXCEPTIONS:
         raise
     else:
         excStr = exc.args[0]
-        if excStr.find('while searching')==-1: # only wrap once!
-            excStr +=" while searching for '%s'"%fullName
+        if excStr.find('while searching') == -1: # only wrap once!
+            excStr +=" while searching for '%s'" % fullName
             if _INCLUDE_NAMESPACE_REPR_IN_NOTFOUND_EXCEPTIONS:
                 excStr += ' in the namespace %s'%pformat(namespace)
             exc.args = (excStr,)
         raise
+
 
 def _isInstanceOrClass(obj):
     if isinstance(obj, type):
@@ -206,14 +211,17 @@ def _isInstanceOrClass(obj):
             return True
     return False
 
+
 def hasKey(obj, key):
     """Determine if 'obj' has 'key' """
+
     if isinstance(obj, Mapping) and key in obj:
         return True
     elif hasattr(obj, key):
         return True
     else:
         return False
+
 
 def valueForKey(obj, key):
     if isinstance(obj, Mapping) and key in obj:
@@ -222,6 +230,7 @@ def valueForKey(obj, key):
         return getattr(obj, key)
     else:
         _raiseNotFoundException(key, obj)
+
 
 def _valueForName(obj, name, executeCallables=False):
     nameChunks = name.split('.')
@@ -240,11 +249,13 @@ def _valueForName(obj, name, executeCallables=False):
             obj = nextObj
     return obj
 
+
 def valueForName(obj, name, executeCallables=False):
     try:
         return _valueForName(obj, name, executeCallables)
     except NotFound as e:
         _wrapNotFoundException(e, fullName=name, namespace=obj)
+
 
 def valueFromSearchList(searchList, name, executeCallables=False):
     key = name.split('.')[0]
@@ -254,6 +265,7 @@ def valueFromSearchList(searchList, name, executeCallables=False):
                                 executeCallables=executeCallables)
     _raiseNotFoundException(key, searchList)
 
+
 def _namespaces(callerFrame, searchList=None):
     yield callerFrame.f_locals
     if searchList:
@@ -262,6 +274,7 @@ def _namespaces(callerFrame, searchList=None):
     yield callerFrame.f_globals
     yield __builtins__
 
+
 def valueFromFrameOrSearchList(searchList, name, executeCallables=False,
                                frame=None):
     def __valueForName():
@@ -269,6 +282,7 @@ def valueFromFrameOrSearchList(searchList, name, executeCallables=False,
             return _valueForName(namespace, name, executeCallables=executeCallables)
         except NotFound as e:
             _wrapNotFoundException(e, fullName=name, namespace=searchList)
+
     try:
         if not frame:
             frame = inspect.stack()[1][0]
@@ -279,6 +293,7 @@ def valueFromFrameOrSearchList(searchList, name, executeCallables=False,
         _raiseNotFoundException(key, searchList)
     finally:
         del frame
+
 
 def valueFromFrame(name, executeCallables=False, frame=None):
     # @@TR consider implementing the C version the same way
@@ -294,9 +309,11 @@ def valueFromFrame(name, executeCallables=False, frame=None):
     finally:
         del frame
 
+
 def hasName(obj, name):
     #Not in the C version
     """Determine if 'obj' has the 'name' """
+
     key = name.split('.')[0]
     if not hasKey(obj, key):
         return False
@@ -306,6 +323,7 @@ def hasName(obj, name):
     except NotFound:
         return False
 
+
 try:
     from ._namemapper import NotFound, valueForKey, valueForName, \
          valueFromSearchList, valueFromFrameOrSearchList, valueFromFrame
@@ -314,23 +332,28 @@ try:
 except:
     C_VERSION = False
 
+
 ##################################################
 ## CLASSES
 
 class Mixin(object):
     """@@ document me"""
+
     def valueForName(self, name):
         return valueForName(self, name)
 
     def valueForKey(self, key):
         return valueForKey(self, key)
 
+
 ##################################################
 ## if run from the command line ##
 
 def example():
     class A(Mixin):
+
         classVar = 'classVar val'
+
         def method(self,arg='method 1 default arg'):
             return arg
 
@@ -368,6 +391,7 @@ def example():
     print(valueForName(vars(), 'a.classVar'))
     print(valueForName(vars(), 'a.dic.func', executeCallables=True))
     print(valueForName(vars(), 'a.method2.item1', executeCallables=True))
+
 
 if __name__ == '__main__':
     example()

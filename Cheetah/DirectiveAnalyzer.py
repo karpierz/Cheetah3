@@ -51,9 +51,8 @@ def main_file(f):
 def _find_templates(directory, suffix):
     for root, _, files in os.walk(directory):
         for f in files:
-            if not f.endswith(suffix):
-                continue
-            yield root + os.path.sep + f
+            if f.endswith(suffix):
+                yield root + os.path.sep + f
 
 
 def _analyze_templates(iterable):
@@ -65,13 +64,12 @@ def main_dir(opts):
     results = _analyze_templates(_find_templates(opts.dir, opts.suffix))
     totals = {}
     for series in results:
-        if not series:
-            continue
-        for k, v in series.iteritems() if PY2 else series.items():
-            try:
-                totals[k] += v
-            except KeyError:
-                totals[k] = v
+        if series:
+            for k, v in series.iteritems() if PY2 else series.items():
+                try:
+                    totals[k] += v
+                except KeyError:
+                    totals[k] = v
     return totals
 
 

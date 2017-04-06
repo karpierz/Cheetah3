@@ -50,24 +50,23 @@ class MemoryCacheStore(AbstractCacheStore):
 
     def add(self, key, val, time=0):
         if key in self._data:
-            raise Error('a value for key %r is already in the cache' % key)
+            raise Error("a value for key %r is already in the cache" % key)
         self._data[key] = (val, time)
 
     def replace(self, key, val, time=0):
         if key in self._data:
-            raise Error('a value for key %r is already in the cache' % key)
+            raise Error("a value for key %r is already in the cache" % key)
         self._data[key] = (val, time)
 
     def delete(self, key):
         del self._data[key]
 
     def get(self, key):
-        (val, exptime) = self._data[key]
+        val, exptime = self._data[key]
         if exptime and time.time() > exptime:
             del self._data[key]
             raise KeyError(key)
-        else:
-            return val
+        return val
 
     def clear(self):
         self._data.clear()
@@ -75,7 +74,7 @@ class MemoryCacheStore(AbstractCacheStore):
 
 class MemcachedCacheStore(AbstractCacheStore):
 
-    servers = ('127.0.0.1:11211')
+    servers = ("127.0.0.1:11211")
 
     def __init__(self, servers=None, debug=False):
         if servers is None:
@@ -89,13 +88,13 @@ class MemcachedCacheStore(AbstractCacheStore):
     def add(self, key, val, time=0):
         res = self._client.add(key, val, time)
         if not res:
-            raise Error('a value for key %r is already in the cache' % key)
+            raise Error("a value for key %r is already in the cache" % key)
         self._data[key] = (val, time)
 
     def replace(self, key, val, time=0):
         res = self._client.replace(key, val, time)
         if not res:
-            raise Error('a value for key %r is already in the cache' % key)
+            raise Error("a value for key %r is already in the cache" % key)
         self._data[key] = (val, time)
 
     def delete(self, key):
@@ -107,8 +106,7 @@ class MemcachedCacheStore(AbstractCacheStore):
         val = self._client.get(key)
         if val is None:
             raise KeyError(key)
-        else:
-            return val
+        return val
 
     def clear(self):
         self._client.flush_all()

@@ -17,8 +17,7 @@ class Error(Exception):
 
 
 class CmdLineIface(object):
-    """\
-    A command line interface to compiled Cheetah template modules."""
+    """A command line interface to compiled Cheetah template modules."""
 
     def __init__(self, templateObj,
                  scriptName=os.path.basename(sys.argv[0]),
@@ -37,11 +36,8 @@ class CmdLineIface(object):
     def _processCmdLineArgs(self):
         try:
             self._opts, self._args = getopt.getopt(
-                self._cmdLineArgs, 'h', ['help',
-                                            'env',
-                                            'pickle=',
-                                            ])
-
+                self._cmdLineArgs,
+                "h", ["help", "env", "pickle="])
         except getopt.GetoptError as v:
             # print help information and exit:
             print(v)
@@ -49,19 +45,18 @@ class CmdLineIface(object):
             sys.exit(2)
 
         for o, a in self._opts:
-            if o in ('-h', '--help'):
+            if o in ("-h", "--help"):
                 print(self.usage())
                 sys.exit()
-            if o == '--env':
+            elif o == "--env":
                 self._template.searchList().insert(0, os.environ)
-            if o == '--pickle':
-                if a == '-':
+            elif o == "--pickle":
+                if a == "-":
                     unpickled = load(sys.stdin)
-                    self._template.searchList().insert(0, unpickled)
                 else:
                     with open(a) as f:
                         unpickled = load(f)
-                    self._template.searchList().insert(0, unpickled)
+                self._template.searchList().insert(0, unpickled)
 
     def usage(self):
         return """Cheetah %(Version)s template module command-line interface
@@ -90,8 +85,4 @@ and collect the output.  It can prepend the shell ENVIRONMENT or a pickled
 Python dictionary to the template's $placeholder searchList, overriding the
 defaults for the $placeholders.
 
-""" % {'scriptName': self._scriptName,
-       'Version': Version,
-       }
-
-# vim: shiftwidth=4 tabstop=4 expandtab
+""" % dict(scriptName=self._scriptName, Version=Version)

@@ -7,7 +7,7 @@ here = os.path.dirname(__file__)
 values = {
     'v': 'VV',
     'one': 1,
-    }
+}
 
 def test_normal():
     plugin = TurboCheetah()

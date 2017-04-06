@@ -122,14 +122,14 @@ much as possible.
 try:
     import itimer
 except ImportError:
-    raise ImportError('''statprof requires the itimer python extension.
+    raise ImportError("""statprof requires the itimer python extension.
 To install it, enter the following commands from a terminal:
 
 wget http://www.cute.fi/~torppa/py-itimer/py-itimer.tar.gz
 tar zxvf py-itimer.tar.gz
 cd py-itimer
 sudo python setup.py install
-''')
+""")
 
 import signal
 import os
@@ -153,6 +153,7 @@ def clock():
 ## Collection data structures
 
 class ProfileState(object):
+
     def __init__(self, frequency=None):
         self.reset(frequency)
 
@@ -185,9 +186,12 @@ class ProfileState(object):
 
 state = ProfileState()
 
+
 ## call_data := { code object: CallData }
 call_data = {}
+
 class CallData(object):
+
     def __init__(self, code):
         self.name = code.co_name
         self.filename = code.co_filename
@@ -196,6 +200,7 @@ class CallData(object):
         self.cum_sample_count = 0
         self.self_sample_count = 0
         call_data[code] = self
+
 
 def get_call_data(code):
     return call_data.get(code, None) or CallData(code)
@@ -215,6 +220,7 @@ def sample_stack_procs(frame):
     for code in code_seen:
         get_call_data(code).cum_sample_count += 1
 
+
 def profile_signal_handler(signum, frame):
     if state.profile_level > 0:
         state.accumulate_time(clock())
@@ -230,6 +236,7 @@ def profile_signal_handler(signum, frame):
 def is_active():
     return state.profile_level > 0
 
+
 def start():
     state.profile_level += 1
     if state.profile_level == 1:
@@ -241,6 +248,7 @@ def start():
             rpt or state.sample_interval, 0.0)
         state.gc_time_taken = 0 # dunno
 
+
 def stop():
     state.profile_level -= 1
     if state.profile_level == 0:
@@ -250,6 +258,7 @@ def stop():
         signal.signal(signal.SIGPROF, signal.SIG_IGN)
         state.remaining_prof_time = rpt[0]
         state.gc_time_taken = 0 # dunno
+
 
 def reset(frequency=None):
     assert state.profile_level == 0, "Can't reset() while statprof is running"
@@ -261,6 +270,7 @@ def reset(frequency=None):
 ## Reporting API
 
 class CallStats(object):
+
     def __init__(self, call_data):
         self_samples = call_data.self_sample_count
         cum_samples = call_data.cum_sample_count
@@ -295,7 +305,7 @@ def display():
     l.sort(reverse=True)
     l = [x[2] for x in l]
 
-    print('%5.5s %10.10s   %7.7s  %-8.8s' % ('%  ', 'cumulative', 'self', ''))
+    print('%5.5s %10.10s   %7.7s  %-8.8s' % ("%  ", "cumulative", "self", ""))
     print('%5.5s  %9.9s  %8.8s  %-8.8s' % ("time", "seconds", "seconds", "name"))
 
     for x in l:

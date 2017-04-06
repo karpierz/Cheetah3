@@ -32,31 +32,33 @@ from ..Template import Template
 
 
 class CGITemplate(Template):
-    """Methods useful in CGI scripts.
+    """\
+    Methods useful in CGI scripts.
 
-       Any class that inherits this mixin must also inherit Cheetah.Servlet.
+    Any class that inherits this mixin must also inherit Cheetah.Servlet.
     """
 
     def cgiHeaders(self):
-        """Outputs the CGI headers if this is a CGI script.
+        """\
+        Outputs the CGI headers if this is a CGI script.
 
-           Usage:  $cgiHeaders#slurp
-           Override .cgiHeadersHook() if you want to customize the headers.
+        Usage:  $cgiHeaders#slurp
+        Override .cgiHeadersHook() if you want to customize the headers.
         """
+
         if self.isCgi():
             return self.cgiHeadersHook()
 
     def cgiHeadersHook(self):
         """Override if you want to customize the CGI headers.
         """
+
         return "Content-type: text/html\n\n"
 
     def isCgi(self):
         """Is this a CGI script?
         """
-        env = 'REQUEST_METHOD' in os.environ
+
+        env = "REQUEST_METHOD" in os.environ
         wk = self._CHEETAH__isControlledByWebKit
         return env and not wk
-
-
-# vim: shiftwidth=4 tabstop=4 expandtab

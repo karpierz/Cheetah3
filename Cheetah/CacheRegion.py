@@ -44,7 +44,7 @@ class CacheItem(object):
         self._expiryTime = 0
 
     def hasExpired(self):
-        return (self._expiryTime and time.time() > self._expiryTime)
+        return bool(self._expiryTime and time.time() > self._expiryTime)
 
     def setExpiryTime(self, time):
         self._expiryTime = time
@@ -110,27 +110,32 @@ class CacheRegion(object):
             cacheStore = CacheStore.MemoryCacheStore()
         self._cacheStore = cacheStore
         self._wrappedCacheDataStore = _CacheDataStoreWrapper(
-            cacheStore, keyPrefix=templateCacheIdPrefix+':'+regionID+':')
+            cacheStore, keyPrefix=templateCacheIdPrefix + ':' + regionID + ':')
         self._cacheItems = {}
 
     def isNew(self):
         return self._isNew
 
     def clear(self):
-        " drop all the caches stored in this cache region "
+        """
+        drop all the caches stored in this cache region
+        """
+
         for cacheItemId in list(self._cacheItems.keys()):
             cacheItem = self._cacheItems[cacheItemId]
             cacheItem.clear()
             del self._cacheItems[cacheItemId]
 
     def getCacheItem(self, cacheItemID):
-        """ Lazy access to a cacheItem
-
-            Try to find a cache in the stored caches. If it doesn't
-            exist, it's created.
-
-            Returns a `CacheItem` instance.
         """
+        Lazy access to a cacheItem
+
+        Try to find a cache in the stored caches. If it doesn't
+        exist, it's created.
+
+        Returns a `CacheItem` instance.
+        """
+
         cacheItemID = md5(str(cacheItemID).encode("utf-8")).hexdigest()
 
         try:

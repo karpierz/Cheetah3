@@ -11,7 +11,6 @@ soon be changed somewhat.
 """
 
 import re
-import sys
 
 
 def indentize(source):
@@ -89,7 +88,7 @@ class Indenter(object):
 
     On = 1
     Level = 0
-    Chars = '    '
+    Chars = "    "
     LevelStack = []
 
     def on(self):
@@ -104,6 +103,7 @@ class Indenter(object):
     def dec(self):
         """decrement can only be applied to values greater zero
             values below zero don't make any sense at all!"""
+
         if self.Level > 0:
             self.Level -= 1
 
@@ -113,23 +113,17 @@ class Indenter(object):
     def pop(self):
         """the levestack can not become -1. any attempt to do so
            sets the level to 0!"""
-        if len(self.LevelStack) > 0:
-            self.Level = self.LevelStack.pop()
-        else:
-            self.Level = 0
+
+        self.Level = self.LevelStack.pop() if self.LevelStack else 0
 
     def setLevel(self, _level):
         """the leve can't be less than zero. any attempt to do so
            sets the level automatically to zero!"""
-        if _level < 0:
-            self.Level = 0
-        else:
-            self.Level = _level
+
+        self.Level = 0 if _level < 0 else _level
 
     def setChar(self, _chars):
         self.Chars = _chars
 
     def indent(self, _default=0):
-        if self.On:
-            return self.Chars * self.Level
-        return " " * _default
+        return (self.Chars * self.Level) if self.On else (" " * _default)

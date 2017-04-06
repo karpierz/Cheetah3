@@ -523,7 +523,7 @@ class ImportManager(object):
     def _acquire(self):
         if self.rlock.locked():
             if self.locker == self._get_ident():
-                self.lockcount = self.lockcount + 1
+                self.lockcount += 1
                 return
         self.rlock.acquire()
         self.locker = self._get_ident()
@@ -531,7 +531,7 @@ class ImportManager(object):
 
     def _release(self):
         if self.lockcount:
-            self.lockcount = self.lockcount - 1
+            self.lockcount -= 1
         else:
             self.rlock.release()
 

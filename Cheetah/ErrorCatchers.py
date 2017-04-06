@@ -23,7 +23,7 @@ class ErrorCatcher(object):
         return rawCode
 
 
-## make an alias
+# make an alias #
 Echo = ErrorCatcher
 
 
@@ -58,4 +58,5 @@ class ListErrors(ErrorCatcher):
 
     def listErrors(self):
         """Return the list of errors."""
+
         return self._errors
